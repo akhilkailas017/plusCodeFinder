@@ -1,6 +1,7 @@
 {
   "name": "PlusCode",
   "short_name": "+code",
+  "start_url": "/",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",
