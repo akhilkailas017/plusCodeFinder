@@ -1,139 +1,202 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  <link rel="shortcut icon" href="/favicon.ico" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-  <meta name="apple-mobile-web-app-title" content="PlusCode" />
-  <link rel="manifest" href="manifest.json">
-  <title>Generate Accurate Plus Code</title>
-  <script src="https://cdn.jsdelivr.net/openlocationcode/latest/openlocationcode.js"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 20px;
-      text-align: center;
-      background-color: #f4f7fa;
-    }
-    h1 {
-      font-size: 24px;
-      margin-bottom: 20px;
-      color: #333;
-    }
-    button {
-      padding: 12px 20px;
-      font-size: 18px;
-      cursor: pointer;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      margin-top: 20px;
-    }
-    button:hover {
-      background-color: #45a049;
-    }
-    input {
-      width: 80%;
-      padding: 15px;
-      margin-top: 20px;
-      font-size: 18px;
-      text-align: center;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      background-color: #fff;
-      cursor: pointer;
-    }
-    input:focus {
-      outline: none;
-      border-color: #4CAF50;
-    }
-    #copyButton {
-      margin-top: 10px;
-      padding: 10px 20px;
-      background-color: #007BFF;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    #copyButton:hover {
-      background-color: #0056b3;
-    }
-    #error {
-      color: red;
-      margin-top: 20px;
-    }
-    @media screen and (max-width: 600px) {
-      input {
-        width: 95%;
-      }
-      button, #copyButton {
-        width: 100%;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="PlusCode Terminal">
+    <title>PlusCode Terminal</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: black;
+            color: white;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-size: 24px;
+            letter-spacing: 1px;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+
+        button {
+            padding: 12px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: black;
+            color: white;
+            border: 2px solid white;
+            border-radius: 5px;
+            margin-top: 20px;
+            box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.7);
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: white;
+            color: black;
+        }
+
+        p {
+            font-size: 18px;
+            padding: 15px;
+            background-color: black;
+            color: white;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        #copyButton,
+        #mapLinkButton,
+        #whatsappButton,
+        #emailButton {
+            display: none;
+            margin-top: 20px;
+            padding: 12px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: black;
+            color: white;
+            border: 2px solid white;
+            border-radius: 5px;
+        }
+
+        #copyButton:hover,
+        #mapLinkButton:hover,
+        #whatsappButton:hover,
+        #emailButton:hover {
+            background-color: white;
+            color: black;
+        }
+
+        #error {
+            color: white;
+            margin-top: 20px;
+            font-size: 18px;
+        }
+
+        @media (max-width: 600px) {
+            button,
+            #copyButton,
+            #mapLinkButton,
+            #whatsappButton,
+            #emailButton {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
+
 <body>
 
-  <h1>Generate Accurate Plus Code</h1>
-  <button onclick="generatePlusCode()">Generate Plus Code</button>
-  
-  <br><br>
-  
-  <input type="text" id="plusCode" placeholder="Your Plus Code will appear here" readonly>
-  
-  <button id="copyButton" style="display: none;" onclick="copyToClipboard()">Copy Plus Code</button>
+    <h1>PlusCode Terminal</h1>
 
-  <div id="error"></div>
+    <button onclick="generatePlusCode()">Generate Plus Code</button>
+    <br><br>
 
-  <script>
-    function generatePlusCode() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-          var lat = position.coords.latitude;
-          var lng = position.coords.longitude;
-          
-          // Use Open Location Code library to encode the coordinates
-          var plusCode = OpenLocationCode.encode(lat, lng);
-          
-          // Display the Plus Code in the input field
-          document.getElementById("plusCode").value = plusCode;
-          
-          // Show the copy button
-          document.getElementById("copyButton").style.display = 'inline-block';
-        }, function(error) {
-          document.getElementById("error").textContent = "Error retrieving location: " + error.message;
-        }, {
-          enableHighAccuracy: true,  // Request high accuracy from GPS
-          timeout: 5000,             // Timeout in milliseconds for getting position
-          maximumAge: 0              // Don't use cached position
-        });
-      } else {
-        document.getElementById("error").textContent = "Geolocation is not supported by this browser.";
-      }
-    }
+    <p id="plusCode">Your Plus Code will appear here</p>
+    <p id="googleMapLink">Your Google Map Link will appear here</p>
 
-    function copyToClipboard() {
-      // Select the input field text
-      var copyText = document.getElementById("plusCode");
-      
-      // Select and copy the text
-      copyText.select();
-      copyText.setSelectionRange(0, 99999); // For mobile devices
+    <button id="copyButton" onclick="copyToClipboard()">Copy Plus Code</button>
+    <button id="mapLinkButton" onclick="viewMap()">View on Google Maps</button>
+    <button id="whatsappButton" onclick="shareOnWhatsapp()">Share on WhatsApp</button>
+    <button id="emailButton" onclick="shareViaEmail()">Share via Email</button>
 
-      // Copy the text to clipboard
-      document.execCommand("copy");
+    <div id="error"></div>
 
-      // Provide feedback to the user
-      alert("Plus Code copied to clipboard!");
-    }
-  </script>
+    <script src="https://cdn.jsdelivr.net/openlocationcode/latest/openlocationcode.js"></script>
+    <script>
+        var plusCode = '';
+
+        function generatePlusCode() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    var lat = position.coords.latitude;
+                    var lng = position.coords.longitude;
+
+                    // Check the accuracy of the retrieved coordinates
+                    var accuracy = position.coords.accuracy;
+
+                    if (accuracy <= 50) {
+                        // Use Open Location Code library to encode the coordinates
+                        plusCode = OpenLocationCode.encode(lat, lng);
+
+                        // Display the Plus Code and Google Maps link in the paragraphs
+                        document.getElementById("plusCode").textContent = plusCode;
+                        document.getElementById("googleMapLink").textContent = "https://www.google.com/maps/search/?q=" + encodeURIComponent(plusCode);
+
+                        // Show the copy buttons for both Plus Code and Google Maps link
+                        document.getElementById("copyButton").style.display = 'inline-block';
+                        document.getElementById("mapLinkButton").style.display = 'inline-block';
+                        document.getElementById("whatsappButton").style.display = 'inline-block';
+                        document.getElementById("emailButton").style.display = 'inline-block';
+                    } else {
+                        // Accuracy isn't sufficient
+                        document.getElementById("error").textContent = "Location accuracy is too low (" + accuracy + " meters). Try again in a more open area.";
+                    }
+                }, function (error) {
+                    document.getElementById("error").textContent = "Error retrieving location: " + error.message;
+                }, {
+                    enableHighAccuracy: true,  // Request high accuracy from GPS
+                    timeout: 10000,            // Timeout in milliseconds for getting position (10 seconds)
+                    maximumAge: 0              // Don't use cached position
+                });
+            } else {
+                document.getElementById("error").textContent = "Geolocation is not supported by this browser.";
+            }
+        }
+
+        function copyToClipboard() {
+            // Select the Plus Code paragraph text
+            var copyText = document.getElementById("plusCode").textContent;
+
+            // Copy the text to clipboard
+            navigator.clipboard.writeText(copyText).then(function () {
+                // Provide feedback to the user
+                alert("Plus Code copied to clipboard!");
+            }).catch(function (error) {
+                alert("Failed to copy text: " + error);
+            });
+        }
+
+        function viewMap() {
+            // Construct the Google Maps URL using the Plus Code
+            var googleMapsLink = document.getElementById("googleMapLink").textContent;
+            
+            // Open Google Maps in a new window or tab
+            window.open(googleMapsLink, "_blank");
+        }
+
+        function shareOnWhatsapp() {
+            var googleMapsLink = document.getElementById("googleMapLink").textContent;
+            var whatsappURL = "https://wa.me/?text=" + encodeURIComponent("Check out this location: " + googleMapsLink);
+
+            // Open WhatsApp sharing link
+            window.open(whatsappURL, "_blank");
+        }
+
+        function shareViaEmail() {
+            var googleMapsLink = document.getElementById("googleMapLink").textContent;
+            var emailSubject = encodeURIComponent("Check out this location");
+            var emailBody = encodeURIComponent("Here is the Plus Code location: " + plusCode + "\nView it on Google Maps: " + googleMapsLink);
+
+            // Open the user's email client with a prefilled email
+            window.open("mailto:?subject=" + emailSubject + "&body=" + emailBody);
+        }
+    </script>
 
 </body>
-</html>
 
+</html>
