@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="PlusCode Terminal">
-    <title>PlusCode Terminal</title>
+    <title>PlusCode Finder</title>
     <style>
         body {
             font-family: 'Courier New', monospace;
@@ -58,10 +58,7 @@
             word-wrap: break-word;
         }
 
-        #copyButton,
-        #mapLinkButton,
-        #whatsappButton,
-        #emailButton {
+        #copyButton {
             display: none;
             margin-top: 20px;
             padding: 12px 20px;
@@ -73,10 +70,7 @@
             border-radius: 5px;
         }
 
-        #copyButton:hover,
-        #mapLinkButton:hover,
-        #whatsappButton:hover,
-        #emailButton:hover {
+        #copyButton:hover {
             background-color: white;
             color: black;
         }
@@ -89,10 +83,7 @@
 
         @media (max-width: 600px) {
             button,
-            #copyButton,
-            #mapLinkButton,
-            #whatsappButton,
-            #emailButton {
+            #copyButton {
                 width: 100%;
             }
         }
@@ -107,12 +98,8 @@
     <br><br>
 
     <p id="plusCode">Your Plus Code will appear here</p>
-    <p id="googleMapLink">Your Google Map Link will appear here</p>
 
     <button id="copyButton" onclick="copyToClipboard()">Copy Plus Code</button>
-    <button id="mapLinkButton" onclick="viewMap()">View on Google Maps</button>
-    <button id="whatsappButton" onclick="shareOnWhatsapp()">Share on WhatsApp</button>
-    <button id="emailButton" onclick="shareViaEmail()">Share via Email</button>
 
     <div id="error"></div>
 
@@ -133,15 +120,11 @@
                         // Use Open Location Code library to encode the coordinates
                         plusCode = OpenLocationCode.encode(lat, lng);
 
-                        // Display the Plus Code and Google Maps link in the paragraphs
+                        // Display the Plus Code
                         document.getElementById("plusCode").textContent = plusCode;
-                        document.getElementById("googleMapLink").textContent = "https://www.google.com/maps/search/?q=" + encodeURIComponent(plusCode);
 
-                        // Show the copy buttons for both Plus Code and Google Maps link
+                        // Show the copy button for the Plus Code
                         document.getElementById("copyButton").style.display = 'inline-block';
-                        document.getElementById("mapLinkButton").style.display = 'inline-block';
-                        document.getElementById("whatsappButton").style.display = 'inline-block';
-                        document.getElementById("emailButton").style.display = 'inline-block';
                     } else {
                         // Accuracy isn't sufficient
                         document.getElementById("error").textContent = "Location accuracy is too low (" + accuracy + " meters). Try again in a more open area.";
@@ -169,31 +152,6 @@
             }).catch(function (error) {
                 alert("Failed to copy text: " + error);
             });
-        }
-
-        function viewMap() {
-            // Construct the Google Maps URL using the Plus Code
-            var googleMapsLink = document.getElementById("googleMapLink").textContent;
-            
-            // Open Google Maps in a new window or tab
-            window.open(googleMapsLink, "_blank");
-        }
-
-        function shareOnWhatsapp() {
-            var googleMapsLink = document.getElementById("googleMapLink").textContent;
-            var whatsappURL = "https://wa.me/?text=" + encodeURIComponent("Check out this location: " + googleMapsLink);
-
-            // Open WhatsApp sharing link
-            window.open(whatsappURL, "_blank");
-        }
-
-        function shareViaEmail() {
-            var googleMapsLink = document.getElementById("googleMapLink").textContent;
-            var emailSubject = encodeURIComponent("Check out this location");
-            var emailBody = encodeURIComponent("Here is the Plus Code location: " + plusCode + "\nView it on Google Maps: " + googleMapsLink);
-
-            // Open the user's email client with a prefilled email
-            window.open("mailto:?subject=" + emailSubject + "&body=" + emailBody);
         }
     </script>
 
